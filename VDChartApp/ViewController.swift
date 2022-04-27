@@ -32,6 +32,8 @@ class ViewController: UIViewController {
         button.backgroundColor = .red
         return button
     }()
+    
+    // MARK: - View lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,29 +57,7 @@ class ViewController: UIViewController {
         roundedButton.layer.cornerRadius = min / 2
     }
     
-    private func addXYLabelAtBottom() {
-        let tempYLabel = createLabel(with: .zero, alignment: .left)
-        tempYLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(tempYLabel)
-        
-        let tempXLabel = createLabel(with: .zero, alignment: .left)
-        tempXLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(tempXLabel)
-        
-        NSLayoutConstraint.activate([
-            tempYLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20.0),
-            tempYLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20.0),
-            tempYLabel.heightAnchor.constraint(equalToConstant: 20.0),
-            tempYLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10.0),
-            tempXLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20.0),
-            tempXLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20.0),
-            tempXLabel.heightAnchor.constraint(equalToConstant: 20.0),
-            tempXLabel.bottomAnchor.constraint(equalTo: tempYLabel.topAnchor),
-        ])
-        
-        labelXCoordinate = tempXLabel
-        labelYCoordinate = tempYLabel
-    }
+    // MARK: - Drawing methods
     
     private func drawXAxisOnScreen() {
         
@@ -127,6 +107,28 @@ class ViewController: UIViewController {
         }
     }
     
+    func drawInitalPointOnScreen(with xValue: CGFloat, yValue: CGFloat) {
+        guard let indexOfY = allYValues.firstIndex(of: yValue),
+              let indexOfX = allXValues.firstIndex(of: xValue) else { return }
+        let centerPoint = CGPoint(x: allXCoordinate[indexOfX], y: allYCoordinate[indexOfY])
+        
+        /// Draw diagonal line for inital point to ploatted point
+        let endPoint = CGPoint(x: kLeftMargin, y: view.bounds.height - kBottomMargin)
+        drawLineOnScreen(with: centerPoint, endPoint: endPoint, color: .gray)
+        
+        /// rounded button taking center frame.
+        roundedButton.frame = CGRect(x: centerPoint.x, y: centerPoint.y, width: 10.0, height: 10.0)
+        roundedButton.center = centerPoint
+        view.addSubview(roundedButton)
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(buttonTouches(sender:)))
+        roundedButton.addGestureRecognizer(pan)
+        
+        labelXCoordinate?.text = "X Coordinate \(xValue)"
+        labelYCoordinate?.text = "Y Coordinate \(yValue)"
+    }
+    
+    // MARK: - Init methods
+    
     func initializePloatingPoint(with startXValue: CGFloat, startYValue: CGFloat) {
             
         /// Currently we are taking base unit of 1 to 10 for X and Y axis respectively.
@@ -165,26 +167,32 @@ class ViewController: UIViewController {
         }
     }
     
-    func drawInitalPointOnScreen(with xValue: CGFloat, yValue: CGFloat) {
-        guard let indexOfY = allYValues.firstIndex(of: yValue),
-              let indexOfX = allXValues.firstIndex(of: xValue) else { return }
-        let centerPoint = CGPoint(x: allXCoordinate[indexOfX], y: allYCoordinate[indexOfY])
+    private func addXYLabelAtBottom() {
+        let tempYLabel = createLabel(with: .zero, alignment: .left)
+        tempYLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(tempYLabel)
         
-        /// Draw diagonal line for inital point to ploatted point
-        let endPoint = CGPoint(x: kLeftMargin, y: view.bounds.height - kBottomMargin)
-        drawLineOnScreen(with: centerPoint, endPoint: endPoint, color: .gray)
+        let tempXLabel = createLabel(with: .zero, alignment: .left)
+        tempXLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(tempXLabel)
         
-        /// rounded button taking center frame.
-        roundedButton.frame = CGRect(x: centerPoint.x, y: centerPoint.y, width: 20.0, height: 20.0)
-        roundedButton.center = centerPoint
-        view.addSubview(roundedButton)
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(buttonTouches(sender:)))
-        roundedButton.addGestureRecognizer(pan)
+        NSLayoutConstraint.activate([
+            tempYLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20.0),
+            tempYLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20.0),
+            tempYLabel.heightAnchor.constraint(equalToConstant: 20.0),
+            tempYLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10.0),
+            tempXLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20.0),
+            tempXLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20.0),
+            tempXLabel.heightAnchor.constraint(equalToConstant: 20.0),
+            tempXLabel.bottomAnchor.constraint(equalTo: tempYLabel.topAnchor),
+        ])
         
-        labelXCoordinate?.text = "X Coordinate \(xValue)"
-        labelYCoordinate?.text = "Y Coordinate \(yValue)"
+        labelXCoordinate = tempXLabel
+        labelYCoordinate = tempYLabel
     }
 }
+
+// MARK: - Helper / Reuseable Methods
 
 extension ViewController {
     
@@ -204,17 +212,17 @@ extension ViewController {
             return
         }
         
+        ///Find out closest number from existing array.
         guard let xValue = allXCoordinate.enumerated().min( by: { abs($0.1 - location.x) < abs($1.1 - location.x) }),
               let yValue = allYCoordinate.enumerated().min( by: { abs($0.1 - location.y) < abs($1.1 - location.y) }) else {
             return
         }
-        roundedButton.frame = CGRect(x: location.x, y: location.y, width: 20.0, height: 20.0)
+        roundedButton.frame = CGRect(x: location.x, y: location.y, width: 10.0, height: 10.0)
+        roundedButton.center = CGPoint(x: location.x, y: location.y)
         labelXCoordinate?.text = "X Coordinate \(allXValues[xValue.offset])"
         labelYCoordinate?.text = "Y Coordinate \(allYValues[yValue.offset])"
     }
-    
-    // MARK:- Helper / Reuseable Methods
-    
+        
     private func drawLineOnScreen(with start: CGPoint,
                                   endPoint: CGPoint,
                                   color: UIColor = .black,
