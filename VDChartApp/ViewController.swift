@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     private let kBottomMargin = 100.0
     private let kLeftMargin = 50.0
     private let kRightMargin = 50.0
+    private let kMargin = 20.0
     
     private let xAxis: [CGFloat] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     private let yAxis: [CGFloat] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
@@ -26,6 +27,8 @@ class ViewController: UIViewController {
     
     private var labelXCoordinate: UILabel?
     private var labelYCoordinate: UILabel?
+    private var lineToPoint: CAShapeLayer!
+    private let linePath = UIBezierPath()
     
     private lazy var roundedButton: UIButton = {
         let button = UIButton(frame: .zero)
@@ -64,16 +67,18 @@ class ViewController: UIViewController {
         /// Draw x axis on screen
         let startYValue = view.bounds.height - kTopMargin
         let endXValue = view.bounds.width - kLeftMargin + 20.0
-        drawLineOnScreen(with: CGPoint(x: kLeftMargin, y: startYValue),
+        let xAxisLine = drawLineOnScreen(with: CGPoint(x: kLeftMargin, y: startYValue),
                          endPoint: CGPoint(x: endXValue , y: startYValue))
+        view.layer.addSublayer(xAxisLine)
         
         /// Draw vertical line on graph with x axis lables.
         for element in xAxis {
             let indexOfX = allXValues.firstIndex(of: CGFloat(element))
             let endPointY = view.bounds.height - (kLeftMargin + kRightMargin)
             let startpointX = allXCoordinate[indexOfX ?? 0]
-            drawLineOnScreen(with: CGPoint(x: startpointX, y: kTopMargin),
+            let parallelLine = drawLineOnScreen(with: CGPoint(x: startpointX, y: kTopMargin),
                              endPoint: CGPoint(x: startpointX, y: endPointY), color: .lightGray)
+            view.layer.addSublayer(parallelLine)
             
             /// Add number label on screen
             let frame = CGRect(x: startpointX, y: endPointY + 10.0, width: 25.0, height: 20.0)
@@ -87,16 +92,18 @@ class ViewController: UIViewController {
         
         /// Draw y axis on screen
         let startYValue = view.bounds.height - kTopMargin
-        drawLineOnScreen(with: CGPoint(x: kLeftMargin, y: startYValue),
+        let yAxisLine = drawLineOnScreen(with: CGPoint(x: kLeftMargin, y: startYValue),
                          endPoint: CGPoint(x: kLeftMargin, y: kTopMargin - 20.0))
+        view.layer.addSublayer(yAxisLine)
         
         /// Draw horizontal line on graph with y axis lables.
         for element in yAxis {
             let indexOfY = allYValues.firstIndex(of: CGFloat(element))
             let endPointX = view.bounds.width - kLeftMargin
             let yValue = allYCoordinate[indexOfY ?? 0]
-            drawLineOnScreen(with: CGPoint(x: kLeftMargin, y: yValue),
+            let parallelLine = drawLineOnScreen(with: CGPoint(x: kLeftMargin, y: yValue),
                              endPoint: CGPoint(x: endPointX, y: yValue), color: .lightGray)
+            view.layer.addSublayer(parallelLine)
             
             /// Add number label on screen
             let frame = CGRect(x: 30, y: yValue, width: 30, height: 20.0)
@@ -114,7 +121,8 @@ class ViewController: UIViewController {
         
         /// Draw diagonal line for inital point to ploatted point
         let endPoint = CGPoint(x: kLeftMargin, y: view.bounds.height - kBottomMargin)
-        drawLineOnScreen(with: centerPoint, endPoint: endPoint, color: .gray)
+        lineToPoint = drawLineOnScreen(with: centerPoint, endPoint: endPoint, color: .gray)
+        view.layer.addSublayer(lineToPoint!)
         
         /// rounded button taking center frame.
         roundedButton.frame = CGRect(x: centerPoint.x, y: centerPoint.y, width: 10.0, height: 10.0)
@@ -177,13 +185,13 @@ class ViewController: UIViewController {
         view.addSubview(tempXLabel)
         
         NSLayoutConstraint.activate([
-            tempYLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20.0),
-            tempYLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20.0),
-            tempYLabel.heightAnchor.constraint(equalToConstant: 20.0),
+            tempYLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: kMargin),
+            tempYLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -kMargin),
+            tempYLabel.heightAnchor.constraint(equalToConstant: kMargin),
             tempYLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10.0),
-            tempXLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20.0),
-            tempXLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20.0),
-            tempXLabel.heightAnchor.constraint(equalToConstant: 20.0),
+            tempXLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: kMargin),
+            tempXLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -kMargin),
+            tempXLabel.heightAnchor.constraint(equalToConstant: kMargin),
             tempXLabel.bottomAnchor.constraint(equalTo: tempYLabel.topAnchor),
         ])
         
@@ -221,22 +229,24 @@ extension ViewController {
         roundedButton.center = CGPoint(x: location.x, y: location.y)
         labelXCoordinate?.text = "X Coordinate \(allXValues[xValue.offset])"
         labelYCoordinate?.text = "Y Coordinate \(allYValues[yValue.offset])"
+        
+        /// Update diagonal line for inital point to ploatted point
+        let endPoint = CGPoint(x: kLeftMargin, y: view.bounds.height - kBottomMargin)
+        updateExistingLine(with: lineToPoint, start: CGPoint(x: location.x, y: location.y), endPoint: endPoint)
     }
         
     private func drawLineOnScreen(with start: CGPoint,
                                   endPoint: CGPoint,
                                   color: UIColor = .black,
-                                  dashPattern: [NSNumber] = []) {
+                                  dashPattern: [NSNumber] = []) -> CAShapeLayer {
         let line = CAShapeLayer()
-        let linePath = UIBezierPath()
-        
         linePath.move(to: start)
         linePath.addLine(to: endPoint)
         line.path = linePath.cgPath
         line.strokeColor = color.cgColor
         line.lineWidth = 1.0
         line.lineDashPattern = dashPattern
-        view.layer.addSublayer(line)
+        return line
     }
 
     private func createLabel(with frame: CGRect,
@@ -248,5 +258,14 @@ extension ViewController {
         label.textAlignment = alignment
         label.text = text
         return label
+    }
+    
+    private func updateExistingLine(with line: CAShapeLayer,
+                                    start: CGPoint,
+                                    endPoint: CGPoint) {
+        let linePath = UIBezierPath()
+        linePath.move(to: start)
+        linePath.addLine(to: endPoint)
+        line.path = linePath.cgPath
     }
 }
