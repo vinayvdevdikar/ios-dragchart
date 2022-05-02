@@ -17,6 +17,10 @@ class ViewController: UIViewController {
     private let kRightMargin = 50.0
     private let kMargin = 20.0
     
+    private let yAxisLabelSize = CGSize(width: 30.0, height: 20.0)
+    private let xAxisLabelSize = CGSize(width: 25.0, height: 20.0)
+    private let kRedCircleSize = CGSize(width: 10.0, height: 10.0)
+
     private let xAxis: [CGFloat] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     private let yAxis: [CGFloat] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     
@@ -41,9 +45,17 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         addXYLabelAtBottom()
+        
+        /// This init method help to find out the all possiable values in given drawing area.
         initializePloatingPoint(with: 0.0, startYValue: 0.0)
+        
+        /// draw X axis on screen.
         drawXAxisOnScreen()
+        
+        /// draw Y axis on screen.
         drawYAxisOnScreen()
+        
+        ///To draw different points on screen please change these values.
         drawInitalPointOnScreen(with: 5.5, yValue: 3.6)
     }
     
@@ -52,6 +64,10 @@ class ViewController: UIViewController {
         allYValues = []
         allXCoordinate = []
         allYCoordinate = []
+        
+        labelXCoordinate  = nil
+        labelYCoordinate = nil
+        lineToPoint  = nil
     }
     
     override func viewDidLayoutSubviews() {
@@ -80,10 +96,13 @@ class ViewController: UIViewController {
                              endPoint: CGPoint(x: startpointX, y: endPointY), color: .lightGray)
             view.layer.addSublayer(parallelLine)
             
+            /// Added extra padding in endpoint Y value to increase the line to 10px
+            let endPointYWithPadding = endPointY + 10.0
+            
             /// Add number label on screen
-            let frame = CGRect(x: startpointX, y: endPointY + 10.0, width: 25.0, height: 20.0)
+            let frame = CGRect(x: startpointX, y: endPointYWithPadding, width: xAxisLabelSize.width, height: xAxisLabelSize.height)
             let label = createLabel(with: frame, text: String(format: "%.2f", element))
-            label.center = CGPoint(x: startpointX, y: endPointY + 10.0)
+            label.center = CGPoint(x: startpointX, y: endPointYWithPadding)
             view.addSubview(label)
         }
     }
@@ -92,8 +111,9 @@ class ViewController: UIViewController {
         
         /// Draw y axis on screen
         let startYValue = view.bounds.height - kTopMargin
+        let endPointYValue = kTopMargin - 20.0 // this 20 px added to move increase the line.
         let yAxisLine = drawLineOnScreen(with: CGPoint(x: kLeftMargin, y: startYValue),
-                         endPoint: CGPoint(x: kLeftMargin, y: kTopMargin - 20.0))
+                         endPoint: CGPoint(x: kLeftMargin, y: endPointYValue))
         view.layer.addSublayer(yAxisLine)
         
         /// Draw horizontal line on graph with y axis lables.
@@ -106,10 +126,10 @@ class ViewController: UIViewController {
             view.layer.addSublayer(parallelLine)
             
             /// Add number label on screen
-            let frame = CGRect(x: 30, y: yValue, width: 30, height: 20.0)
+            let frame = CGRect(x: kMargin, y: yValue, width: xAxisLabelSize.width, height: xAxisLabelSize.height)
             let label = createLabel(with: frame, text: String(format: "%.2f", element),
-                                    alignment: .center)
-            label.center = CGPoint(x: 30, y: yValue)
+                                    alignment: .right)
+            label.center = CGPoint(x: kMargin, y: yValue)
             view.addSubview(label)
         }
     }
@@ -125,7 +145,7 @@ class ViewController: UIViewController {
         view.layer.addSublayer(lineToPoint!)
         
         /// rounded button taking center frame.
-        roundedButton.frame = CGRect(x: centerPoint.x, y: centerPoint.y, width: 10.0, height: 10.0)
+        roundedButton.frame = CGRect(x: centerPoint.x, y: centerPoint.y, width: kRedCircleSize.width, height: kRedCircleSize.height)
         roundedButton.center = centerPoint
         view.addSubview(roundedButton)
         let pan = UIPanGestureRecognizer(target: self, action: #selector(buttonTouches(sender:)))
@@ -225,7 +245,7 @@ extension ViewController {
               let yValue = allYCoordinate.enumerated().min( by: { abs($0.1 - location.y) < abs($1.1 - location.y) }) else {
             return
         }
-        roundedButton.frame = CGRect(x: location.x, y: location.y, width: 10.0, height: 10.0)
+        roundedButton.frame.origin = CGPoint(x: location.x, y: location.y)
         roundedButton.center = CGPoint(x: location.x, y: location.y)
         labelXCoordinate?.text = "X Coordinate \(allXValues[xValue.offset])"
         labelYCoordinate?.text = "Y Coordinate \(allYValues[yValue.offset])"
