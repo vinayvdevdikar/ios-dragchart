@@ -36,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		352FA0E02819867E00F14891 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		356A7B342812A91700A56B3B /* VDChartApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VDChartApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		356A7B372812A91700A56B3B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		356A7B392812A91700A56B3B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -99,6 +100,7 @@
 		356A7B362812A91700A56B3B /* VDChartApp */ = {
 			isa = PBXGroup;
 			children = (
+				352FA0E02819867E00F14891 /* README.md */,
 				356A7B372812A91700A56B3B /* AppDelegate.swift */,
 				356A7B392812A91700A56B3B /* SceneDelegate.swift */,
 				356A7B3B2812A91700A56B3B /* ViewController.swift */,
