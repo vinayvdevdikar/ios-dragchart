@@ -50,6 +50,7 @@
 		356A7B542812A91900A56B3B /* VDChartAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VDChartAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		356A7B582812A91900A56B3B /* VDChartAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VDChartAppUITests.swift; sourceTree = "<group>"; };
 		356A7B5A2812A91900A56B3B /* VDChartAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VDChartAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		359043F528200DF700B5671A /* ezgif-5-359e284296.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "ezgif-5-359e284296.gif"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				352FA0E02819867E00F14891 /* README.md */,
+				359043F528200DF700B5671A /* ezgif-5-359e284296.gif */,
 				356A7B372812A91700A56B3B /* AppDelegate.swift */,
 				356A7B392812A91700A56B3B /* SceneDelegate.swift */,
 				356A7B3B2812A91700A56B3B /* ViewController.swift */,
