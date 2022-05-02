@@ -29,3 +29,7 @@ For `internal` and `private` code we should not need any documentation as most o
 ## Code formatting
 
 This project uses Swift-format & Swift-lint to format the code. Make sure your code does not introduce any compiler/warining errors.
+
+## Output
+
+![Alt Text](/VDChartApp/ezgif-5-359e284296.gif)
