@@ -32,7 +32,7 @@ This project uses Swift-format & Swift-lint to format the code. Make sure your c
 
 ## Output
 
-![Alt Text](/VDChartApp/ezgif-5-359e284296.gif)
+![Alt Text](/VDChartApp/screenshot.png)
 
 ## License
 VDCharts is available. See the LICENSE file for more info.
