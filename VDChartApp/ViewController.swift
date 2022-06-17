@@ -18,7 +18,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
      
         let chartView = VDChartView(with: xAxis, with: yAxis)
-       // chartView.initAllData()
         chartView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(chartView)
         NSLayoutConstraint.activate([
